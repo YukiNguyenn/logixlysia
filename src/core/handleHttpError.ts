@@ -28,7 +28,6 @@ export async function handleHttpError(
     )
   }
 
-
   if (options?.config?.transports?.length) {
     promises.push(logToTransports('ERROR', request, { status: statusCode }, store, options))
   }
