@@ -1,13 +1,13 @@
-import { logToFile } from '../transports'
+import { logToFile, logToTransports } from '../transports'
 import { HttpError, Options, RequestInfo, StoreData } from '../types'
 import { buildLogMessage } from './buildLogMessage'
 
-export function handleHttpError(
+export async function handleHttpError(
   request: RequestInfo,
   error: HttpError,
   store: StoreData,
   options?: Options
-): void {
+): Promise<void> {
   const statusCode = error.status || 500
   console.error(
     buildLogMessage('ERROR', request, { status: statusCode }, store, options)
@@ -27,4 +27,11 @@ export function handleHttpError(
       )
     )
   }
+
+
+  if (options?.config?.transports?.length) {
+    promises.push(logToTransports('ERROR', request, { status: statusCode }, store, options))
+  }
+
+  await Promise.all(promises)
 }
